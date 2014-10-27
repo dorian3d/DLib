@@ -40,6 +40,7 @@
 #else
 	#include <dirent.h>
 	#include <sys/stat.h>
+  #include <unistd.h>
 	#define mkdir(a) mkdir(a, 0755)
 #endif
 

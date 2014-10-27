@@ -1,4 +1,4 @@
-CC=gcc
+CC=g++
 CFLAGS=-DNDEBUG -fPIC -O3 -Wall
 LFLAGS=-shared
 
