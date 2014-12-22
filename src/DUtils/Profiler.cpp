@@ -34,6 +34,9 @@ using namespace DUtils;
 using namespace std;
 
 // ---------------------------------------------------------------------------
+const float Profiler::MS = 1e3; // milliseconds
+const float Profiler::SECONDS = 1; // seconds
+// ---------------------------------------------------------------------------
 
 void Profiler::profile(const std::string &name)
 {

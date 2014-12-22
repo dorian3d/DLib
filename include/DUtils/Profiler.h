@@ -74,8 +74,8 @@ class Profiler
 public:
 
   // scales of time
-  static const float MS = 1e3; // milliseconds
-  static const float SECONDS = 1; // seconds
+  static const float MS; // milliseconds
+  static const float SECONDS; // seconds
 
 public:
 
