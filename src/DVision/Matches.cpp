@@ -8,6 +8,7 @@
  *
  */
 
+#if CV_NONFREE //Surf is non-free and may not be available
 #include <iostream>
 #include <vector>
 #include <string>
@@ -112,4 +113,5 @@ void DVision::Matches::Load(const std::string &filename,
 
 // ---------------------------------------------------------------------------
 
+#endif //CV_NONFREE
 

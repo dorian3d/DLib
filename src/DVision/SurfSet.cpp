@@ -13,7 +13,7 @@
  * License: see the LICENSE.txt file
  *
  */
-
+#if CV_NONFREE //Surf is non-free and may not be available
 #include "SurfSet.h"
 #include <iostream>
 #include <fstream>
@@ -762,4 +762,4 @@ void SurfSet::Remove(const std::vector<unsigned int> &ids)
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-
+#endif //CV_NONFREE

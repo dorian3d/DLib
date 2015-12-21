@@ -39,7 +39,9 @@ namespace DVision
 }
 
 // Features and descriptors
+#if CV_NONFREE //Surf is non-free and may not be available
 #include "SurfSet.h"
+#endif
 #include "BRIEF.h"
 
 // Image functions

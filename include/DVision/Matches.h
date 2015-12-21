@@ -10,7 +10,7 @@
  
 #ifndef __D_MATCHES__
 #define __D_MATCHES__
-
+#if CV_NONFREE //Surf is non-free and may not be available
 #include <vector>
 #include <string>
 #include "SurfSet.h"
@@ -97,4 +97,5 @@ protected:
 
 }
 
+#endif
 #endif

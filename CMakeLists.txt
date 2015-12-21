@@ -4,6 +4,12 @@ project(DLib)
 option(BUILD_DUtils   "Build DUtils (basic c++ functions)." ON)
 option(BUILD_DUtilsCV "Build DUtilsCV (OpenCV functions, requires DUtils)." ON)
 option(BUILD_DVision  "Build DVision (computer vision functions, requires DUtilsCV)." ON)
+option(USE_CV_NONFREE "Use non-free parts of OpenCV (i.e. Surf)." ON)
+
+
+if(USE_CV_NONFREE)
+  add_definitions(-DCV_NONFREE)
+endif(USE_CV_NONFREE)
 
 if(BUILD_DUtils)
   set(HDRS include/DUtils/
