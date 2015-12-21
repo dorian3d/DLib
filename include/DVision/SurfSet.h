@@ -16,6 +16,7 @@
 
 #ifndef __D_SURF_SET__
 #define __D_SURF_SET__
+#if CV_NONFREE //Surf is non-free and may not be available
 
 // Set if U-SURF is supported by Opencv (probably by applying this patch:
 // https://code.ros.org/trac/opencv/ticket/825 )
@@ -316,4 +317,5 @@ std::vector<float> SurfSet::get(unsigned int i) const
 }
 
 #endif
+#endif //CV_NONFREE
 
