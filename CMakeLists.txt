@@ -57,6 +57,11 @@ if(BUILD_DUtilsCV OR BUILD_DVision)
   find_package(OpenCV REQUIRED)
 endif(BUILD_DUtilsCV OR BUILD_DVision)
 
+set(LIB_SHARED "SHARED")
+if(WIN32)
+  set(LIB_SHARED "STATIC") # DLib seems not to be designed to be exported as Windows DLLs/LIBs
+endif(WIN32)
+
 include_directories(include/DUtils include/DUtilsCV include/DVision ${OpenCV_INCLUDE_DIRS})
 add_library(${PROJECT_NAME} SHARED ${SRCS})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
