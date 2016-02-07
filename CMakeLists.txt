@@ -63,7 +63,7 @@ if(WIN32)
 endif(WIN32)
 
 include_directories(include/DUtils include/DUtilsCV include/DVision ${OpenCV_INCLUDE_DIRS})
-add_library(${PROJECT_NAME} SHARED ${SRCS})
+add_library(${PROJECT_NAME} ${LIB_SHARED} ${SRCS})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 
 if (MSVC)
