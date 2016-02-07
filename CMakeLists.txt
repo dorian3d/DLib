@@ -34,19 +34,24 @@ endif(BUILD_DUtilsCV)
 
 if(BUILD_DVision)
   set(HDRS
-    include/DVision/BRIEF.h          include/DVision/DVision.h        include/DVision/HSolver.h        include/DVision/Matches.h        
+    include/DVision/DVision.h        include/DVision/HSolver.h        include/DVision/Matches.h        
     include/DVision/PMVSCamera.h     include/DVision/PixelPointFile.h
     include/DVision/BundleCamera.h   include/DVision/FSolver.h        include/DVision/ImageFunctions.h include/DVision/PLYFile.h        
     include/DVision/PatchFile.h      include/DVision/SurfSet.h
     ${HDRS})
   set(SRCS
-    src/DVision/BRIEF.cpp          src/DVision/FSolver.cpp        src/DVision/ImageFunctions.cpp src/DVision/PLYFile.cpp        
+    src/DVision/FSolver.cpp        src/DVision/ImageFunctions.cpp src/DVision/PLYFile.cpp        
     src/DVision/PatchFile.cpp      src/DVision/SurfSet.cpp
     src/DVision/BundleCamera.cpp   src/DVision/HSolver.cpp        src/DVision/Matches.cpp        src/DVision/PMVSCamera.cpp     
     src/DVision/PixelPointFile.cpp
     ${SRCS})
-endif(BUILD_DVision)
 
+  FIND_PACKAGE(Boost QUIET)  # For dynamic_bitset
+  if (Boost_FOUND)
+    set(HDRS include/DVision/BRIEF.h ${HDRS})
+    set(SRCS src/DVision/BRIEF.cpp ${SRCS})
+  endif(Boost_FOUND)
+endif(BUILD_DVision)
 
 if(BUILD_DUtilsCV OR BUILD_DVision)
   find_package(OpenCV REQUIRED)
@@ -55,6 +60,10 @@ endif(BUILD_DUtilsCV OR BUILD_DVision)
 include_directories(include/DUtils include/DUtilsCV include/DVision ${OpenCV_INCLUDE_DIRS})
 add_library(${PROJECT_NAME} SHARED ${SRCS})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+
+if (MSVC)
+  target_link_libraries(${PROJECT_NAME} Ws2_32.lib)
+endif(MSVC)
 
 configure_file(src/DLib.cmake.in
   "${PROJECT_BINARY_DIR}/DLibConfig.cmake" @ONLY)
