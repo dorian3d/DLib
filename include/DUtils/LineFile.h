@@ -16,7 +16,6 @@
 #include "FileModes.h"
 #include <vector>
 #include <fstream>
-using namespace std;
 
 namespace DUtils {
 
@@ -48,7 +47,7 @@ public:
 	 * @param mode: READ or WRITE
 	 * @throws DException if cannot open the file
 	 */
-	LineFile(const string &filename, const FILE_MODES mode);
+  LineFile(const std::string &filename, const FILE_MODES mode);
 
 	/**
 	 * Opens a file for reading. It closes any other opened file
@@ -62,7 +61,7 @@ public:
 	 * @param filename
 	 * @throws DException if cannot create the file
 	 */
-	inline void OpenForReading(const string &filename)
+  inline void OpenForReading(const std::string &filename)
 	{
 		OpenForReading(filename.c_str());
 	}
@@ -79,7 +78,7 @@ public:
 	 * @param filename
 	 * @throws DException if cannot create the file
 	 */
-	inline void OpenForWriting(const string &filename)
+  inline void OpenForWriting(const std::string &filename)
 	{
 		OpenForWriting(filename.c_str());
 	}
@@ -96,7 +95,7 @@ public:
 	 * @param filename
 	 * @throws DException if cannot open the file
 	 */
-	inline void OpenForAppending(const string &filename)
+  inline void OpenForAppending(const std::string &filename)
 	{
 		OpenForAppending(filename.c_str());
 	}
@@ -125,7 +124,7 @@ public:
 	 * Writes a line
 	 * @throws DException if wrong access mode
 	 */
-	inline LineFile& operator<< (const string &s)
+  inline LineFile& operator<< (const std::string &s)
 	{
 		return this->operator <<(s.c_str()); 
 	}
@@ -135,28 +134,28 @@ public:
 	 * @param s: string to write on
 	 * @throws DException if wrong access mode
 	 */
-	LineFile& operator>> (string &s);
+  LineFile& operator>> (std::string &s);
 
   /**
    * Reads all the remaining lines in the file
    * @param v vector to store the lines in
    * @throws DException if wrong access mode
    */
-  LineFile& operator>> (vector<string> &v);
+  LineFile& operator>> (std::vector<std::string> &v);
 
 	/**
 	 * Writes several lines at a time
 	 * @param v: vector of line strings
 	 * @throws DException if wrong access mode
 	 */
-	void Dump(const vector<string> &v);
+  void Dump(const std::vector<std::string> &v);
 	
 	/**
 	 * Writes several lines at a time
 	 * @param v: vector of line strings
 	 * @throws DException if wrong access mode
 	 */
-	inline LineFile& operator<< (const vector<string> &v)
+  inline LineFile& operator<< (const std::vector<std::string> &v)
 	{
 		Dump(v);
 		return *this;
@@ -186,9 +185,9 @@ protected:
   /// Opening mode
 	FILE_MODES m_mode;		// opening mode
 	/// File stream
-	fstream m_f;			// fstream
+  std::fstream m_f;			// fstream
 	/// Next line to read
-	string m_next_line;	// next line to read
+  std::string m_next_line;	// next line to read
 };
 
 }

@@ -16,7 +16,6 @@
 #include "DException.h"
 #include "FileModes.h"
 #include <fstream>
-using namespace std;
 
 namespace DUtils {
 
@@ -49,7 +48,7 @@ public:
 	 * @param mode: READ or WRITE
 	 * @throws DException if cannot open the file
 	 */
-	BinaryFile(const string &filename, const FILE_MODES mode);
+  BinaryFile(const std::string &filename, const FILE_MODES mode);
 
 	/**
 	 * Opens a file for reading. It closes any other opened file
@@ -63,7 +62,7 @@ public:
 	 * @param filename
 	 * @throws DException if cannot open the file
 	 */
-	inline void OpenForReading(const string &filename)
+  inline void OpenForReading(const std::string &filename)
 	{
 		OpenForReading(filename.c_str());
 	}
@@ -80,7 +79,7 @@ public:
 	 * @param filename
 	 * @throws DException if cannot create the file
 	 */
-	inline void OpenForWriting(const string &filename)
+  inline void OpenForWriting(const std::string &filename)
 	{
 		OpenForWriting(filename.c_str());
 	}
@@ -97,7 +96,7 @@ public:
 	 * @param filename
 	 * @throws DException if cannot open the file
 	 */
-	inline void OpenForAppending(const string &filename)
+  inline void OpenForAppending(const std::string &filename)
 	{
 		OpenForAppending(filename.c_str());
 	}
@@ -241,7 +240,7 @@ protected:
   /// Opening mode
 	FILE_MODES m_mode;		// opening mode
 	/// File stream
-	fstream m_f;			// fstream
+  std::fstream m_f;			// fstream
 	/// Auxiliar buffer
 	char m_aux[8];	// auxiliar buffer
 

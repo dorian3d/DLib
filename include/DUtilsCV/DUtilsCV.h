@@ -56,8 +56,5 @@ namespace DUtilsCV
 #include "Transformations.h"
 #include "Geometry.h"
 
-// CV version
-#include "CvVersion.h"
-
 #endif
 

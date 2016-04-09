@@ -15,13 +15,12 @@
 
 #include <stdexcept>
 #include <string>
-using namespace std;
 
 namespace DUtils {
 
 /// General exception
 class DException :
-	public exception
+  public std::exception
 {
 public:
 	/**
@@ -39,7 +38,7 @@ public:
 	 * Creates an exception with a custom error message
 	 * @param msg: message
 	 */
-	DException(const string &msg) throw(): m_message(msg){}
+  DException(const std::string &msg) throw(): m_message(msg){}
 
   /**
 	 * Destructor
@@ -56,7 +55,7 @@ public:
 
 protected:
   /// Error message
-	string m_message;
+  std::string m_message;
 };
 
 }

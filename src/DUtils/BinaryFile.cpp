@@ -57,7 +57,7 @@ BinaryFile::BinaryFile(const char *filename, const FILE_MODES mode)
 	Init(filename, mode);
 }
 
-BinaryFile::BinaryFile(const string &filename, const FILE_MODES mode)
+BinaryFile::BinaryFile(const std::string &filename, const FILE_MODES mode)
 {
 	Init(filename.c_str(), mode);
 }
@@ -82,9 +82,9 @@ void BinaryFile::OpenForReading(const char *filename)
 {
 	Close();
 
-	m_f.open(filename, ios::in | ios::binary);
+  m_f.open(filename, std::ios::in | std::ios::binary);
 	if(!m_f.is_open()){
-		throw DException(string("Cannot open ") + filename + " for reading");
+    throw DException(std::string("Cannot open ") + filename + " for reading");
 	}else{
 		m_mode = READ;
 	}
@@ -94,9 +94,9 @@ void BinaryFile::OpenForWriting(const char *filename)
 {
 	Close();
 	
-	m_f.open(filename, ios::out | ios::binary);
+  m_f.open(filename, std::ios::out | std::ios::binary);
 	if(!m_f.is_open()){
-		throw DException(string("Cannot open ") + filename + " for writing");
+    throw DException(std::string("Cannot open ") + filename + " for writing");
 	}else{
 		m_mode = WRITE;
 	}
@@ -106,9 +106,9 @@ void BinaryFile::OpenForAppending(const char *filename)
 {
 	Close();
 
-	m_f.open(filename, ios::out | ios::app | ios::binary);
+  m_f.open(filename, std::ios::out | std::ios::app | std::ios::binary);
 	if(!m_f.is_open()){
-		throw DException(string("Cannot open ") + filename + " for writing at the end");
+    throw DException(std::string("Cannot open ") + filename + " for writing at the end");
 	}else{
 		m_mode = DUtils::FILE_MODES(WRITE | APPEND);
 	}

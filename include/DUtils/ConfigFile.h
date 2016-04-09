@@ -202,7 +202,7 @@ protected:
    * @param used the names of the tokens that cannot be replaced because of
    *   circular dependencies
    */
-  void resolveVar(std::string &value, const std::set<string> &used);
+  void resolveVar(std::string &value, const std::set<std::string> &used);
 	
 protected:
 
@@ -221,7 +221,7 @@ template<class T>
 T ConfigFile::getAnonymous(int n) const
 {
   const char U = '?';
-  stringstream ss;
+  std::stringstream ss;
   ss << U << n;
   return get<T>(ss.str().c_str());
 }
@@ -255,11 +255,11 @@ void ConfigFile::put(const std::string &name, const T &data)
 template<class T>
 void ConfigFile::put(const char *name, const T &data)
 {
-  pair<std::map<std::string, std::string>::iterator, bool> status;
+  std::pair<std::map<std::string, std::string>::iterator, bool> status;
   
   std::string value = StringFunctions::toString<T>(data);
   
-  status = m_data.insert(make_pair(name, value));
+  status = m_data.insert(std::make_pair(name, value));
   
   if(!status.second)
   {

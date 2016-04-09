@@ -12,7 +12,7 @@
 #define __BUNDLE_CAMERA__
 
 #include <vector>
-#include <opencv/cv.h>
+#include <opencv2/core.hpp>
 #include <string>
 #include <fstream>
  

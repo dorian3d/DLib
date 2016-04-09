@@ -9,8 +9,9 @@
  */
 
 #include <vector>
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/calib3d.hpp>
 #include "Drawing.h"
 
 using namespace std;
@@ -125,7 +126,7 @@ void Drawing::drawCorrespondences(cv::Mat &image, const cv::Mat &img1,
 	
   cvSetImageROI(ipl_ret, roi);
   IplImage ipl_aux1 = IplImage(aux1);
-  cvCopyImage(&ipl_aux1, ipl_ret);
+  cvCopy(&ipl_aux1, ipl_ret);
   
   roi.x = 0;
   roi.y = img1.rows;
@@ -134,7 +135,7 @@ void Drawing::drawCorrespondences(cv::Mat &image, const cv::Mat &img1,
 	
   cvSetImageROI(ipl_ret, roi);
   IplImage ipl_aux2 = IplImage(aux2);
-  cvCopyImage(&ipl_aux2, ipl_ret);
+  cvCopy(&ipl_aux2, ipl_ret);
 
 	cvResetImageROI(ipl_ret);
 

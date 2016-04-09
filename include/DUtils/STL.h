@@ -303,7 +303,7 @@ void STL::print(const std::vector<T> &v, const std::string &name,
     f << *vit << " ";
   }
   f << "]";
-  f << endl;
+  f << std::endl;
 }
 
 // ---------------------------------------------------------------------------

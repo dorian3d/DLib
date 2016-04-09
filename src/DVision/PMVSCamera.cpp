@@ -9,7 +9,7 @@
  */
  
 #include <vector>
-#include <opencv/cv.h>
+#include <opencv2/core.hpp>
 #include <string>
 #include <sstream>
 #include <fstream>
