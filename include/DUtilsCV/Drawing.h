@@ -12,7 +12,8 @@
 #define __D_CV_DRAWING__
 
 #include <vector>
-#include <opencv/cv.h>
+#include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
 
 namespace DUtilsCV
 {
