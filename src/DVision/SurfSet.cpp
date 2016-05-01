@@ -106,14 +106,6 @@ void SurfSet::LoadCustom(const std::string &filename)
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-void SurfSet::Extract(const cv::Mat &image, double hessianTh, bool extended)
-{
-  CvSURFParams params = cvSURFParams(hessianTh, (extended ? 1: 0) );
-  extract(image, params);
-}
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
 #if USURF_SUPPORTED
 void SurfSet::_ExtractUpright(const cv::Mat &image, double hessianTh, bool extended)
 {
@@ -123,88 +115,6 @@ void SurfSet::_ExtractUpright(const cv::Mat &image, double hessianTh, bool exten
 }
 #endif
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-void SurfSet::extract(const cv::Mat &image, const CvSURFParams &params)
-{
-  #if CV24
-    // OpenCV 2.4 implementation
-  
-    cv::SURF surf(params.hessianThreshold, params.nOctaves, params.nOctaveLayers,
-      (params.extended == 1), false /* upright */);
-    
-    cv::Mat descs;
-    surf(image, cv::Mat() /* mask */, this->keys, descs);
-    
-    const int L = (params.extended == 1 ? 128 : 64);
-    this->descriptors.resize(this->keys.size() * L);
-    this->laplacians.resize(this->keys.size());
-    
-    vector<cv::KeyPoint>::const_iterator kit;
-    vector<int>::iterator lit = this->laplacians.begin();
-    for(kit = this->keys.begin(); kit != this->keys.end(); ++kit, ++lit)
-    {
-      *lit = kit->class_id; // laplacian sign should be stored here
-    }
-    
-    //assert(descs.type() == CV_32F && descs.isContinuous());
-    
-    std::copy(descs.ptr<float>(), descs.ptr<float>() + (descs.rows * descs.cols),
-      this->descriptors.begin());
-  
-  #else
-  
-    // old implementation opencv 2.0
-    CvSeq *kp1=NULL;
-    CvSeq *desc1=NULL;
-    CvMemStorage *storage = cvCreateMemStorage(0);
-   
-    IplImage ipl_image = IplImage(image);
-    cvExtractSURF(&ipl_image, NULL, &kp1, &desc1, storage, params);
-
-    CvSeqReader reader, kreader;
-    cvStartReadSeq( desc1, &reader, 0 );
-    cvStartReadSeq( kp1, &kreader, 0 );
-
-    const int L = (params.extended ? 128 : 64);
-
-    descriptors.resize(desc1->total * L);
-    keys.resize(kp1->total);
-    laplacians.resize(kp1->total);
-
-    for( int i = 0; i < desc1->total; i++ )
-    {
-      const CvSURFPoint *p= (const CvSURFPoint*)kreader.ptr;
-      const float* vec = (const float*)reader.ptr;
-      CV_NEXT_SEQ_ELEM( reader.seq->elem_size, reader );
-      CV_NEXT_SEQ_ELEM( kreader.seq->elem_size, kreader );
-
-      keys[i].pt.x = p->pt.x;
-      keys[i].pt.y = p->pt.y;
-      keys[i].angle = p->dir;
-      keys[i].size = (float)p->size;
-      keys[i].response = p->hessian;
-      keys[i].octave = getPointOctave(*p, params);
-      laplacians[i] = p->laplacian;
-
-      for(int j = 0; j < L; ++j){
-          descriptors[i*L + j] = vec[j];
-      }
-    }
-    
-    cvReleaseMemStorage(&storage);
-  
-  #endif
-}
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-void SurfSet::Compute(const cv::Mat &image,
-    const std::vector<cv::KeyPoint> &keypoints, bool extended)
-{
-  CvSURFParams params = cvSURFParams(0, (extended ? 1: 0) );
-  compute(image, keypoints, params);
-}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -219,99 +129,6 @@ void SurfSet::_ComputeUpright(const cv::Mat &image,
 }
 
 #endif
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-void SurfSet::compute(const cv::Mat &image,
-  const std::vector<cv::KeyPoint> &keypoints, const CvSURFParams &params)
-{
-  #if CV24
-    // OpenCV 2.4 implementation
-    if(keypoints.empty())
-    {
-      this->keys.clear();
-      this->descriptors.clear();
-      this->laplacians.clear();
-    }
-    else
-    {
-      this->keys = keypoints;
-
-      cv::SURF surf(params.hessianThreshold, params.nOctaves, 
-        params.nOctaveLayers, (params.extended == 1), false /* upright */);
-      
-      cv::Mat descs;
-      surf(image, cv::Mat() /* mask */, this->keys, descs, true);
-    
-      this->descriptors.resize(this->keys.size() * descs.cols);
-      this->laplacians.resize(this->keys.size());
-      
-      vector<cv::KeyPoint>::const_iterator kit;
-      vector<int>::iterator lit = this->laplacians.begin();
-      for(kit = this->keys.begin(); kit != this->keys.end(); ++kit, ++lit)
-      {
-        *lit = kit->class_id; // laplacian sign should be stored here
-      }
-      
-      assert(descs.type() == CV_32F && descs.isContinuous());
-      
-      std::copy(descs.ptr<float>(), descs.ptr<float>() + (descs.rows * descs.cols),
-        this->descriptors.begin());
-    }
-  
-  #else
-  
-    const int L = (params.extended ? 128 : 64);
-    
-    keys = keypoints;
-    laplacians.resize(keys.size());
-    descriptors.resize(keys.size() * L);
-    
-    std::fill(laplacians.begin(), laplacians.end(), 1);
-
-    CvSeqWriter writer;
-    CvMemStorage *storage = cvCreateMemStorage(0);
-    cvStartWriteSeq(0, sizeof(CvSeq), sizeof(CvSURFPoint), storage, &writer);
-    CvSURFPoint p;
-
-    std::vector<cv::KeyPoint>::const_iterator kit;
-    for(kit = keypoints.begin(); kit != keypoints.end(); ++kit)
-    {
-      p.pt.x = kit->pt.x;
-      p.pt.y = kit->pt.y;
-      p.dir = kit->angle;
-      p.size = kit->size;
-      p.hessian = kit->response;
-      p.laplacian = 1;
-      
-      CV_WRITE_SEQ_ELEM(p, writer);
-    }
-    
-    CvSeq *kp1 = cvEndWriteSeq(&writer);
-    CvSeq *desc1 = NULL;
-
-    IplImage ipl_image = IplImage(image);
-    cvExtractSURF(&ipl_image, NULL, &kp1, &desc1, storage,
-      params, 1); // use provided keypoints);
-
-    CvSeqReader reader;
-    cvStartReadSeq( desc1, &reader, 0 );
-
-    assert(desc1->total == (int)keys.size()); // ### check
-
-    for( int i = 0; i < desc1->total; i++ )
-    {
-      const float* vec = (const float*)reader.ptr;
-      CV_NEXT_SEQ_ELEM( reader.seq->elem_size, reader );
-
-      for(int j = 0; j < L; ++j){
-          descriptors[i*L + j] = vec[j];
-      }
-    }
-    
-    cvReleaseMemStorage(&storage);
-  #endif
-}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -687,32 +504,6 @@ void SurfSet::load(cv::FileStorage &fs, int idx)
   #endif
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-int SurfSet::getPointOctave(const CvSURFPoint& kpt, const CvSURFParams& params)
-  const 
-{
-  // these are as defined in opencv surf.cpp
-  const int HAAR_SIZE0 = 9;
-  const int HAAR_SIZE_INC = 6;
-  
-  int octave = 0, layer = 0, best_octave = 0;
-  float min_diff = FLT_MAX;
-  for( octave = 1; octave < params.nOctaves; octave++ )
-    for( layer = 0; layer < params.nOctaveLayers; layer++ )
-    {
-      float diff = std::abs(kpt.size - 
-        (float)((HAAR_SIZE0 + HAAR_SIZE_INC*layer) << octave));
-      if( min_diff > diff )
-      {
-        min_diff = diff;
-        best_octave = octave;
-        if( min_diff == 0 )
-          return best_octave;
-      }
-  }
-  return best_octave;
-}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 

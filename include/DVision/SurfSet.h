@@ -21,8 +21,9 @@
 // https://code.ros.org/trac/opencv/ticket/825 )
 #define USURF_SUPPORTED 0
 
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/flann.hpp>
 #include <vector>
 #include <string>
 
@@ -228,24 +229,6 @@ protected:
 
 protected:
 
-  /**
-   * Performs the actual extraction with the provided parameters
-   * @param image
-   * @param params surf detector params
-   * @see SurfSet::Extract
-   */
-  void extract(const cv::Mat &image, const CvSURFParams &params);
-
-  /**
-   * Performs the actual computation with the provided parameters
-   * @param image
-   * @param keypoints keypoints to set
-   * @param params surf detector parameters
-   * @see SurfSet::Compute
-   */
-  void compute(const cv::Mat &image,
-    const std::vector<cv::KeyPoint> &keypoints, const CvSURFParams &params);
-
 	/** 
 	 * Calculates the square distance between two descriptors
 	 * @param ita beginning of one descriptor
@@ -282,16 +265,6 @@ protected:
 		std::vector<int> &A_corr, std::vector<int> &B_corr,
 		std::vector<double> *distances,
 		bool remove_duplicates, double max_ratio);
-
-  /**
-   * Returns the octave of a surf keypoint
-   * @param kpt keypoint
-   * @param params extractor parameters
-   * @note This function is copied from the opencv surf.cpp file, written
-   *    by Liu Liu
-   */
-  int getPointOctave(const CvSURFPoint& kpt, const CvSURFParams& params) const;
-
 protected:
   
   /// Flann index
