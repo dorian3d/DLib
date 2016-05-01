@@ -29,7 +29,7 @@
 #ifndef __D_BRIEF__
 #define __D_BRIEF__
 
-#include <opencv/cv.h>
+#include <opencv2/core.hpp>
 #include <vector>
 #include <boost/dynamic_bitset.hpp>
 
@@ -47,7 +47,7 @@ public:
   enum Type
   {
     RANDOM, // random pairs (Calonder's original version)
-    RANDOM_CLOSE, // random but close pairs (used in GalvezIROS11)
+    RANDOM_CLOSE // random but close pairs (used in GalvezIROS11)
   };
   
 public:

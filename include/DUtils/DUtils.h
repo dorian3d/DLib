@@ -16,7 +16,7 @@
  * Written by Dorian Galvez-Lopez,
  * University of Zaragoza
  * 
- * Check my website to obtain updates: http://webdiis.unizar.es/~dorian
+ * Check my website to obtain updates: http://doriangalvez.com
  *
  * \section license License
  * This program is free software: you can redistribute it and/or modify

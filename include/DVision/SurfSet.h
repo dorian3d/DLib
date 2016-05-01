@@ -17,12 +17,8 @@
 #ifndef __D_SURF_SET__
 #define __D_SURF_SET__
 
-// Set if U-SURF is supported by Opencv (probably by applying this patch:
-// https://code.ros.org/trac/opencv/ticket/825 )
-#define USURF_SUPPORTED 0
-
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
+#include <opencv2/core.hpp>
+#include <opencv2/features2d.hpp>
 #include <vector>
 #include <string>
 
@@ -55,11 +51,8 @@ public:
 	void Extract(const cv::Mat &image, 
 		double hessianTh = 400.0, bool extended = false);
 
-#if USURF_SUPPORTED
 	/** 
 	 * Extract U-SURF points from an image
-	 * NOTE: this function is only available if opencv supports U-SURF
-   * (by applying the corresponding patch)
 	 * @param image
 	 * @param surf surf data
 	 * @param hessianTh hessian threshold
@@ -68,7 +61,6 @@ public:
 	 */
 	void _ExtractUpright(const cv::Mat &image, 
 		double hessianTh = 400.0, bool extended = false);
-#endif
 
   /**
    * Copies the given keypoints and computes their SURF descriptors
@@ -80,11 +72,8 @@ public:
   void Compute(const cv::Mat &image,
     const std::vector<cv::KeyPoint> &keypoints, bool extended = false);
 
-#if USURF_SUPPORTED  
   /**
    * Copies the given keypoints and computes their U-SURF descriptors
-   * NOTE: this function is only available if opencv supports U-SURF
-   * (by applying the corresponding patch)
    * @param image
    * @param keypoints
    * @param extended if true, 128-dimensional surf are used instead of 64-d
@@ -92,7 +81,6 @@ public:
    */
   void _ComputeUpright(const cv::Mat &image,
     const std::vector<cv::KeyPoint> &keypoints, bool extended = false);
-#endif
   
   /**
    * Returns the length of the descriptor vectors of the SURF features
@@ -228,13 +216,27 @@ protected:
 
 protected:
 
+  struct SURFParams {
+    float hessianThreshold;
+    bool extended;
+    bool upright;
+    int nOctaves;
+    int nOctaveLayers;
+
+    SURFParams(float hessianThreshold = 400, bool extended = false,
+               bool upright = false,
+               int nOctaves = 4, int nOctaveLayers = 3)
+      : hessianThreshold(hessianThreshold), extended(extended),
+        upright(upright), nOctaves(nOctaves), nOctaveLayers(nOctaveLayers) {}
+  };
+
   /**
    * Performs the actual extraction with the provided parameters
    * @param image
    * @param params surf detector params
    * @see SurfSet::Extract
    */
-  void extract(const cv::Mat &image, const CvSURFParams &params);
+  void extract(const cv::Mat &image, const SURFParams &params);
 
   /**
    * Performs the actual computation with the provided parameters
@@ -244,7 +246,7 @@ protected:
    * @see SurfSet::Compute
    */
   void compute(const cv::Mat &image,
-    const std::vector<cv::KeyPoint> &keypoints, const CvSURFParams &params);
+    const std::vector<cv::KeyPoint> &keypoints, const SURFParams &params);
 
 	/** 
 	 * Calculates the square distance between two descriptors
@@ -290,7 +292,7 @@ protected:
    * @note This function is copied from the opencv surf.cpp file, written
    *    by Liu Liu
    */
-  int getPointOctave(const CvSURFPoint& kpt, const CvSURFParams& params) const;
+  int getPointOctave(const cv::KeyPoint& kpt, const SURFParams& params) const;
 
 protected:
   

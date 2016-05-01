@@ -21,14 +21,10 @@
 #include <vector>
 
 #include "DUtils.h"
-#include "DUtilsCV.h" // defines macros CVXX
 
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
-#if CV24
-#include <opencv2/nonfree/features2d.hpp>
-#endif
-
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/xfeatures2d/nonfree.hpp>
 
 
 using namespace std;
@@ -108,93 +104,44 @@ void SurfSet::LoadCustom(const std::string &filename)
 
 void SurfSet::Extract(const cv::Mat &image, double hessianTh, bool extended)
 {
-  CvSURFParams params = cvSURFParams(hessianTh, (extended ? 1: 0) );
+  SURFParams params(hessianTh, extended);
   extract(image, params);
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-#if USURF_SUPPORTED
 void SurfSet::_ExtractUpright(const cv::Mat &image, double hessianTh, bool extended)
 {
-  CvSURFParams params = cvSURFParams(hessianTh, (extended ? 1: 0) );
-  params.upright = 1;
+  SURFParams params(hessianTh, extended, true);
   extract(image, params);
 }
-#endif
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-void SurfSet::extract(const cv::Mat &image, const CvSURFParams &params)
+void SurfSet::extract(const cv::Mat &image, const SURFParams &params)
 {
-  #if CV24
-    // OpenCV 2.4 implementation
-  
-    cv::SURF surf(params.hessianThreshold, params.nOctaves, params.nOctaveLayers,
-      (params.extended == 1), false /* upright */);
-    
-    cv::Mat descs;
-    surf(image, cv::Mat() /* mask */, this->keys, descs);
-    
-    const int L = (params.extended == 1 ? 128 : 64);
-    this->descriptors.resize(this->keys.size() * L);
-    this->laplacians.resize(this->keys.size());
-    
-    vector<cv::KeyPoint>::const_iterator kit;
-    vector<int>::iterator lit = this->laplacians.begin();
-    for(kit = this->keys.begin(); kit != this->keys.end(); ++kit, ++lit)
-    {
-      *lit = kit->class_id; // laplacian sign should be stored here
-    }
-    
-    //assert(descs.type() == CV_32F && descs.isContinuous());
-    
-    std::copy(descs.ptr<float>(), descs.ptr<float>() + (descs.rows * descs.cols),
-      this->descriptors.begin());
-  
-  #else
-  
-    // old implementation opencv 2.0
-    CvSeq *kp1=NULL;
-    CvSeq *desc1=NULL;
-    CvMemStorage *storage = cvCreateMemStorage(0);
-   
-    IplImage ipl_image = IplImage(image);
-    cvExtractSURF(&ipl_image, NULL, &kp1, &desc1, storage, params);
+  cv::Ptr<cv::xfeatures2d::SURF> surf = cv::xfeatures2d::SURF::create(
+        params.hessianThreshold, params.nOctaves, params.nOctaveLayers,
+        params.extended, params.upright);
 
-    CvSeqReader reader, kreader;
-    cvStartReadSeq( desc1, &reader, 0 );
-    cvStartReadSeq( kp1, &kreader, 0 );
+  cv::Mat descs;
+  surf->detectAndCompute(image, cv::Mat() /* mask */, this->keys, descs);
 
-    const int L = (params.extended ? 128 : 64);
+  const int L = (params.extended == 1 ? 128 : 64);
+  this->descriptors.resize(this->keys.size() * L);
+  this->laplacians.resize(this->keys.size());
 
-    descriptors.resize(desc1->total * L);
-    keys.resize(kp1->total);
-    laplacians.resize(kp1->total);
+  vector<cv::KeyPoint>::const_iterator kit;
+  vector<int>::iterator lit = this->laplacians.begin();
+  for(kit = this->keys.begin(); kit != this->keys.end(); ++kit, ++lit)
+  {
+    *lit = kit->class_id; // laplacian sign should be stored here
+  }
 
-    for( int i = 0; i < desc1->total; i++ )
-    {
-      const CvSURFPoint *p= (const CvSURFPoint*)kreader.ptr;
-      const float* vec = (const float*)reader.ptr;
-      CV_NEXT_SEQ_ELEM( reader.seq->elem_size, reader );
-      CV_NEXT_SEQ_ELEM( kreader.seq->elem_size, kreader );
+  //assert(descs.type() == CV_32F && descs.isContinuous());
 
-      keys[i].pt.x = p->pt.x;
-      keys[i].pt.y = p->pt.y;
-      keys[i].angle = p->dir;
-      keys[i].size = (float)p->size;
-      keys[i].response = p->hessian;
-      keys[i].octave = getPointOctave(*p, params);
-      laplacians[i] = p->laplacian;
-
-      for(int j = 0; j < L; ++j){
-          descriptors[i*L + j] = vec[j];
-      }
-    }
-    
-    cvReleaseMemStorage(&storage);
-  
-  #endif
+  std::copy(descs.ptr<float>(), descs.ptr<float>() + (descs.rows * descs.cols),
+    this->descriptors.begin());
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -202,115 +149,56 @@ void SurfSet::extract(const cv::Mat &image, const CvSURFParams &params)
 void SurfSet::Compute(const cv::Mat &image,
     const std::vector<cv::KeyPoint> &keypoints, bool extended)
 {
-  CvSURFParams params = cvSURFParams(0, (extended ? 1: 0) );
+  SURFParams params(0, extended);
   compute(image, keypoints, params);
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-#if USURF_SUPPORTED
 
 void SurfSet::_ComputeUpright(const cv::Mat &image,
     const std::vector<cv::KeyPoint> &keypoints, bool extended)
 {
-  CvSURFParams params = cvSURFParams(0, (extended ? 1: 0) );
-  params.upright = 1;
+  SURFParams params(0, extended, true);
   compute(image, keypoints, params);
 }
-
-#endif
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 void SurfSet::compute(const cv::Mat &image,
-  const std::vector<cv::KeyPoint> &keypoints, const CvSURFParams &params)
+  const std::vector<cv::KeyPoint> &keypoints, const SURFParams &params)
 {
-  #if CV24
-    // OpenCV 2.4 implementation
-    if(keypoints.empty())
+  if(keypoints.empty())
+  {
+    this->keys.clear();
+    this->descriptors.clear();
+    this->laplacians.clear();
+  }
+  else
+  {
+    this->keys = keypoints;
+
+    cv::Ptr<cv::xfeatures2d::SURF> surf = cv::xfeatures2d::SURF::create(
+          params.hessianThreshold, params.nOctaves, params.nOctaveLayers,
+          params.extended, params.upright);
+
+    cv::Mat descs;
+    surf->compute(image, this->keys, descs);
+
+    this->descriptors.resize(this->keys.size() * descs.cols);
+    this->laplacians.resize(this->keys.size());
+
+    vector<cv::KeyPoint>::const_iterator kit;
+    vector<int>::iterator lit = this->laplacians.begin();
+    for(kit = this->keys.begin(); kit != this->keys.end(); ++kit, ++lit)
     {
-      this->keys.clear();
-      this->descriptors.clear();
-      this->laplacians.clear();
+      *lit = kit->class_id; // laplacian sign should be stored here
     }
-    else
-    {
-      this->keys = keypoints;
 
-      cv::SURF surf(params.hessianThreshold, params.nOctaves, 
-        params.nOctaveLayers, (params.extended == 1), false /* upright */);
-      
-      cv::Mat descs;
-      surf(image, cv::Mat() /* mask */, this->keys, descs, true);
-    
-      this->descriptors.resize(this->keys.size() * descs.cols);
-      this->laplacians.resize(this->keys.size());
-      
-      vector<cv::KeyPoint>::const_iterator kit;
-      vector<int>::iterator lit = this->laplacians.begin();
-      for(kit = this->keys.begin(); kit != this->keys.end(); ++kit, ++lit)
-      {
-        *lit = kit->class_id; // laplacian sign should be stored here
-      }
-      
-      assert(descs.type() == CV_32F && descs.isContinuous());
-      
-      std::copy(descs.ptr<float>(), descs.ptr<float>() + (descs.rows * descs.cols),
-        this->descriptors.begin());
-    }
-  
-  #else
-  
-    const int L = (params.extended ? 128 : 64);
-    
-    keys = keypoints;
-    laplacians.resize(keys.size());
-    descriptors.resize(keys.size() * L);
-    
-    std::fill(laplacians.begin(), laplacians.end(), 1);
+    assert(descs.type() == CV_32F && descs.isContinuous());
 
-    CvSeqWriter writer;
-    CvMemStorage *storage = cvCreateMemStorage(0);
-    cvStartWriteSeq(0, sizeof(CvSeq), sizeof(CvSURFPoint), storage, &writer);
-    CvSURFPoint p;
-
-    std::vector<cv::KeyPoint>::const_iterator kit;
-    for(kit = keypoints.begin(); kit != keypoints.end(); ++kit)
-    {
-      p.pt.x = kit->pt.x;
-      p.pt.y = kit->pt.y;
-      p.dir = kit->angle;
-      p.size = kit->size;
-      p.hessian = kit->response;
-      p.laplacian = 1;
-      
-      CV_WRITE_SEQ_ELEM(p, writer);
-    }
-    
-    CvSeq *kp1 = cvEndWriteSeq(&writer);
-    CvSeq *desc1 = NULL;
-
-    IplImage ipl_image = IplImage(image);
-    cvExtractSURF(&ipl_image, NULL, &kp1, &desc1, storage,
-      params, 1); // use provided keypoints);
-
-    CvSeqReader reader;
-    cvStartReadSeq( desc1, &reader, 0 );
-
-    assert(desc1->total == (int)keys.size()); // ### check
-
-    for( int i = 0; i < desc1->total; i++ )
-    {
-      const float* vec = (const float*)reader.ptr;
-      CV_NEXT_SEQ_ELEM( reader.seq->elem_size, reader );
-
-      for(int j = 0; j < L; ++j){
-          descriptors[i*L + j] = vec[j];
-      }
-    }
-    
-    cvReleaseMemStorage(&storage);
-  #endif
+    std::copy(descs.ptr<float>(), descs.ptr<float>() + (descs.rows * descs.cols),
+      this->descriptors.begin());
+  }
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -630,23 +518,9 @@ void SurfSet::save(cv::FileStorage &fs, int idx) const
   fs << "descriptor_length" << GetDescriptorLength();
   cv::write(fs, "keypoints", keys);
 
-  #if CV24  
-    cv::write(fs, "descriptors", descriptors);
-    cv::write(fs, "laplacians", laplacians);
-  #else
-  
-    if(!descriptors.empty())
-      fs << "descriptors" << "[" << descriptors << "]";
-    else
-      fs << "descriptors" << "[" << "]";
-    
-    if(!laplacians.empty())
-      fs << "laplacians" << "[" << laplacians << "]";
-    else
-      fs << "laplacians" << "[" << "]";
-      
-  #endif
-  
+  cv::write(fs, "descriptors", descriptors);
+  cv::write(fs, "laplacians", laplacians);
+
   fs << "}";
 }
 
@@ -678,18 +552,13 @@ void SurfSet::load(cv::FileStorage &fs, int idx)
   descriptors.resize(keys.size() * L);
   laplacians.resize(keys.size());
 
-  #if CV24
-    cv::read(fn["descriptors"], descriptors);
-    cv::read(fn["laplacians"], laplacians);
-  #else
-    fn["descriptors"] >> descriptors;
-    fn["laplacians"] >> laplacians;
-  #endif
+  cv::read(fn["descriptors"], descriptors);
+  cv::read(fn["laplacians"], laplacians);
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-int SurfSet::getPointOctave(const CvSURFPoint& kpt, const CvSURFParams& params)
+int SurfSet::getPointOctave(const cv::KeyPoint& kpt, const SURFParams& params)
   const 
 {
   // these are as defined in opencv surf.cpp

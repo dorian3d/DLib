@@ -8,7 +8,7 @@
  *
  */
 
-#include <opencv/cv.h>
+#include <opencv2/core.hpp>
 #include "Geometry.h"
 #include "Types.h"
 

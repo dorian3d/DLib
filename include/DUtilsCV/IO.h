@@ -13,8 +13,7 @@
 
 #include <iostream>
 #include <vector>
-#include <opencv/cv.h>
-#include <opencv2/legacy/legacy.hpp>
+#include <opencv2/core.hpp>
 #include <string>
 
 namespace DUtilsCV
@@ -104,26 +103,6 @@ public:
     const std::string &nodename = "data");
   
   // Save and Load functions to make calling easier
-  
-  /**
-   * Saves a fern classifier
-   * @param filename
-   * @param c
-   * @param nodename
-   */
-  inline static void save(const std::string &filename, 
-    const cv::FernClassifier &c,
-    const std::string &nodename = "fern_classifier");
-
-  /**
-   * Loads a fern classifier
-   * @param filename
-   * @param c
-   * @param nodename
-   */
-  inline static void load(const std::string &filename, 
-    cv::FernClassifier &c,
-    const std::string &nodename = "fern_classifier");
 
 };
 
@@ -163,24 +142,6 @@ void IO::load(const std::string &filename, T& c,
 {
   cv::FileStorage fs(filename, cv::FileStorage::READ);
   c.read(fs[nodename]);
-}
-
-// ---------------------------------------------------------------------------
-
-inline void IO::save(const std::string &filename, 
-    const cv::FernClassifier &c,
-    const std::string &nodename)
-{
-  IO::save<cv::FernClassifier>(filename, c, nodename);
-}
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-inline void IO::load(const std::string &filename, 
-    cv::FernClassifier &c,
-    const std::string &nodename)
-{
-  IO::load<cv::FernClassifier>(filename, c, nodename);
 }
 
 // ---------------------------------------------------------------------------

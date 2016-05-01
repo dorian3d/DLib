@@ -13,7 +13,7 @@
 
 #include <vector>
 #include <queue>
-#include <opencv/cv.h>
+#include <opencv2/core.hpp>
 #include <string>
 
 namespace DUtilsCV

@@ -5,6 +5,22 @@ option(BUILD_DUtils   "Build DUtils (basic c++ functions)." ON)
 option(BUILD_DUtilsCV "Build DUtilsCV (OpenCV functions, requires DUtils)." ON)
 option(BUILD_DVision  "Build DVision (computer vision functions, requires DUtilsCV)." ON)
 
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
+    "MinSizeRel" "RelWithDebInfo")
+endif()
+
+if(MSVC)
+  if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
+    string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+  endif()
+elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic")
+endif()
+
 if(BUILD_DUtils)
   set(HDRS include/DUtils/
     include/DUtils/BinaryFile.h      include/DUtils/DUtils.h          include/DUtils/FileModes.h       include/DUtils/Math.hpp          
@@ -34,17 +50,23 @@ endif(BUILD_DUtilsCV)
 
 if(BUILD_DVision)
   set(HDRS
-    include/DVision/BRIEF.h          include/DVision/DVision.h        include/DVision/HSolver.h        include/DVision/Matches.h        
+    include/DVision/DVision.h        include/DVision/HSolver.h        include/DVision/Matches.h
     include/DVision/PMVSCamera.h     include/DVision/PixelPointFile.h
     include/DVision/BundleCamera.h   include/DVision/FSolver.h        include/DVision/ImageFunctions.h include/DVision/PLYFile.h        
     include/DVision/PatchFile.h      include/DVision/SurfSet.h
     ${HDRS})
   set(SRCS
-    src/DVision/BRIEF.cpp          src/DVision/FSolver.cpp        src/DVision/ImageFunctions.cpp src/DVision/PLYFile.cpp        
+    src/DVision/FSolver.cpp        src/DVision/ImageFunctions.cpp src/DVision/PLYFile.cpp
     src/DVision/PatchFile.cpp      src/DVision/SurfSet.cpp
     src/DVision/BundleCamera.cpp   src/DVision/HSolver.cpp        src/DVision/Matches.cpp        src/DVision/PMVSCamera.cpp     
     src/DVision/PixelPointFile.cpp
     ${SRCS})
+
+  find_package(Boost QUIET)  # For dynamic_bitset
+  if (Boost_FOUND)
+    set(HDRS include/DVision/BRIEF.h ${HDRS})
+    set(SRCS src/DVision/BRIEF.cpp ${SRCS})
+  endif(Boost_FOUND)
 endif(BUILD_DVision)
 
 
@@ -52,8 +74,13 @@ if(BUILD_DUtilsCV OR BUILD_DVision)
   find_package(OpenCV REQUIRED)
 endif(BUILD_DUtilsCV OR BUILD_DVision)
 
+set(LIB_SHARED "SHARED")
+if(WIN32)
+  set(LIB_SHARED "STATIC")
+endif(WIN32)
+
 include_directories(include/DUtils include/DUtilsCV include/DVision ${OpenCV_INCLUDE_DIRS})
-add_library(${PROJECT_NAME} SHARED ${SRCS})
+add_library(${PROJECT_NAME} ${LIB_SHARED} ${SRCS})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 
 configure_file(src/DLib.cmake.in

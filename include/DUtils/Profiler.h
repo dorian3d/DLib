@@ -200,7 +200,7 @@ public:
    */
   void showStatistics(const std::string &name = "", 
     const std::string &suffix = "s", double scale = 1.,
-    ostream &out = std::cout) const;
+    std::ostream &out = std::cout) const;
 
 protected:
   
