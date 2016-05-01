@@ -38,7 +38,6 @@ DLib is divided into 3 libraries for different purposes:
     * `FSolver`: implementation of the RANSAC + 8-point algorithm to compute fundamental matrices between images
     * `HSolver`: implementation of the RANSAC + DLT algorithm to compute homographies between images
     * `ImageFunctions`: functions to get patches from images
-    * `SurfSet`: manages SURF keypoints (keeping the laplacian sign) and descriptors
     * `BundleCamera`: reads/writes camera files created by the Bundle software
     * `PMVSCamera`, `PatchFile`, `PLYFile`: read/write data created by the PMVS software
     * `PixelPointFile`, `Matches`: read/write multi-purpose pixel and 3D data files

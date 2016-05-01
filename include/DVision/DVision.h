@@ -39,7 +39,6 @@ namespace DVision
 }
 
 // Features and descriptors
-#include "SurfSet.h"
 #include "BRIEF.h"
 
 // Image functions

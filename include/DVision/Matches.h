@@ -13,7 +13,6 @@
 
 #include <vector>
 #include <string>
-#include "SurfSet.h"
 
 namespace DVision {
 
@@ -21,30 +20,6 @@ namespace DVision {
 class Matches
 {
 public:
-
-  /**
-   * Saves two correspondence vectors in filename, w/ keypoints
-   * @param filename
-   * @param s1 surfset with keypoints from first image
-   * @param s2 surfset with keypoints from second image
-   * @param c1
-   * @param c2 must be as long as c1
-   */
-  static void Save(const std::string &filename,
-    const SurfSet &s1, const SurfSet &s2,
-    const std::vector<int> &c1, const std::vector<int> &c2);
-
-  /**
-   * Loads two correspondence vectors from filename, w/ keypoints
-   * @param filename
-   * @param s1
-   * @param s2
-   * @param c1
-   * @param c2 must be as long as c1
-   */
-  static void Load(const std::string &filename,
-    SurfSet &s1, SurfSet &s2,
-    std::vector<int> &c1, std::vector<int> &c2);
 
   /**
    * Saves two correspondence vectors in filename, w/o keypoints

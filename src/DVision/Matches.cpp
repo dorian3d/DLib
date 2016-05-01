@@ -88,28 +88,3 @@ void DVision::Matches::load(cv::FileStorage &fs, std::vector<int> &c0,
 
 // ---------------------------------------------------------------------------
 
-void DVision::Matches::Save(const std::string &filename,
-    const SurfSet &s1, const SurfSet &s2,
-    const std::vector<int> &c1, const std::vector<int> &c2)
-{
-  cv::FileStorage fs(filename, cv::FileStorage::WRITE);
-  s1.save(fs, 0);
-  s2.save(fs, 1);
-  DVision::Matches::save(fs, c1, c2);
-}
-
-// ---------------------------------------------------------------------------
-
-void DVision::Matches::Load(const std::string &filename,
-    SurfSet &s1, SurfSet &s2,
-    std::vector<int> &c1, std::vector<int> &c2)
-{
-  cv::FileStorage fs(filename, cv::FileStorage::READ); 
-  s1.load(fs, 0);
-  s2.load(fs, 1);
-  DVision::Matches::load(fs, c1, c2);
-}
-
-// ---------------------------------------------------------------------------
-
-
