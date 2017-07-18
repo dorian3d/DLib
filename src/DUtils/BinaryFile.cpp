@@ -24,8 +24,8 @@
 #include <netinet/in.h>
 #endif
 
-#ifdef _MSC_VER
-// Microsoft Visual Studio does not ship stdint.h
+#if defined(_MSC_VER) && _MSC_VER < 1600
+// Microsoft Visual Studio does not ship stdint.h until 2010 version
 typedef __int32 int32_t;
 typedef unsigned __int32 uint32_t;
 typedef __int64 int64_t;
