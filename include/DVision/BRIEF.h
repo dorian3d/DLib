@@ -30,6 +30,7 @@
 #define __D_BRIEF__
 
 #include <opencv2/core.hpp>
+#include <opencv2/features2d.hpp>
 #include <vector>
 #include <boost/dynamic_bitset.hpp>
 
