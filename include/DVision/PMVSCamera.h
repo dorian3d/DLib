@@ -12,7 +12,7 @@
 #define __PMVS_CAMERA__
  
 #include <vector>
-#include <opencv2/core.hpp>
+#include <opencv2/core/core.hpp>
 #include <string>
  
 namespace DVision {

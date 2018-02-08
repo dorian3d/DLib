@@ -11,7 +11,7 @@
 #ifndef __D_CV_MAT__
 #define __D_CV_MAT__
 
-#include <opencv2/core.hpp>
+#include <opencv2/core/core.hpp>
 #include <vector>
 
 namespace DUtilsCV

@@ -11,7 +11,7 @@
 #ifndef __D_CV_GEOMETRY__
 #define __D_CV_GEOMETRY__
 
-#include <opencv2/core.hpp>
+#include <opencv2/core/core.hpp>
 
 namespace DUtilsCV
 {
