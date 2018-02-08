@@ -11,7 +11,7 @@
 #ifndef __D_H_SOLVER__
 #define __D_H_SOLVER__
 
-#include <opencv2/core.hpp>
+#include <opencv2/core/core.hpp>
 #include <vector>
 #include "FSolver.h"
 

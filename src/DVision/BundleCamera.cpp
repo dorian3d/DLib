@@ -13,7 +13,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include <opencv2/core.hpp>
+#include <opencv2/core/core.hpp>
 #include "BundleCamera.h"
 
 using namespace DVision::Bundle;
