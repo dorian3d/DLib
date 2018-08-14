@@ -146,7 +146,7 @@ cv::Mat FSolver::findFundamentalMat(const cv::Mat &P1, const cv::Mat &P2,
       cv::Mat sq_ab, norms;
       cv::multiply(l1.rowRange(0,2), l1.rowRange(0,2), sq_ab);
       
-      cv::reduce(sq_ab, norms, 0, CV_REDUCE_SUM); // 0 = single row
+      cv::reduce(sq_ab, norms, 0, cv::REDUCE_SUM); // 0 = single row
       cv::sqrt(norms, norms); // norms is Nx2
       
       cv::Mat thresholds = norms * reprojection_error; // Nx1
@@ -157,7 +157,7 @@ cv::Mat FSolver::findFundamentalMat(const cv::Mat &P1, const cv::Mat &P2,
       // d(x, l) = dot(x*, l*), * means normalized
       cv::Mat prod, dot;
       cv::multiply(l1, Q1, prod); // l1 against Q1 (homogeneous in image coords)
-      cv::reduce(prod, dot, 0, CV_REDUCE_SUM); // dot is Nx1
+      cv::reduce(prod, dot, 0, cv::REDUCE_SUM); // dot is Nx1
       
       // error w/o sign
       dot = abs(dot);

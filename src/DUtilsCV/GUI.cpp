@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <queue>
+#include <opencv/highgui.h>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
@@ -39,7 +40,7 @@ int GUI::showImage(const cv::Mat &image, bool autosize,
     name = ssname.str();
     
     int flags = 0;
-    if(autosize) flags |= CV_WINDOW_AUTOSIZE;
+    if(autosize) flags |= cv::WINDOW_AUTOSIZE;
     
     cv::namedWindow( name.c_str(), flags );
     
@@ -81,7 +82,7 @@ int GUI::showImageInfo(const cv::Mat &image, bool autosize,
   tWinHandler *hwnd = (_hwnd ? _hwnd : &haux);
   
   if(image.type() == CV_8U)
-    cv::cvtColor(image, image_rgb, CV_GRAY2RGB);
+    cv::cvtColor(image, image_rgb, cv::COLOR_GRAY2RGB);
   else
     image_rgb = image;
   
@@ -237,7 +238,7 @@ void GUI::MouseHandler::attach(const tWinHandler &hwnd,
 void GUI::MouseHandler::attachToClicks(const tWinHandler &hwnd)
 {
   m_valid_events.resize(1);
-  m_valid_events[0] = CV_EVENT_LBUTTONUP;
+  m_valid_events[0] = cv::EVENT_LBUTTONUP;
   m_attached = true;
   cv::setMouseCallback(hwnd, GUI::MouseHandler::callbackHandlerFunction, this);
 }
@@ -247,7 +248,7 @@ void GUI::MouseHandler::attachToClicks(const tWinHandler &hwnd)
 void GUI::MouseHandler::attachToMotions(const tWinHandler &hwnd)
 {
   m_valid_events.resize(1);
-  m_valid_events[0] = CV_EVENT_MOUSEMOVE;
+  m_valid_events[0] = cv::EVENT_MOUSEMOVE;
   m_attached = true;
   cv::setMouseCallback(hwnd, GUI::MouseHandler::callbackHandlerFunction, this);
 }
@@ -275,16 +276,16 @@ void GUI::MouseHandler::listenToAll()
   //@note RACE CONDITION!
   
   m_valid_events.resize(10);
-  m_valid_events[0] = CV_EVENT_LBUTTONDOWN;
-  m_valid_events[1] = CV_EVENT_LBUTTONUP;
-  m_valid_events[2] = CV_EVENT_LBUTTONDBLCLK;
-  m_valid_events[3] = CV_EVENT_RBUTTONDOWN;
-  m_valid_events[4] = CV_EVENT_RBUTTONUP;
-  m_valid_events[5] = CV_EVENT_RBUTTONDBLCLK;
-  m_valid_events[6] = CV_EVENT_MBUTTONDOWN;
-  m_valid_events[7] = CV_EVENT_MBUTTONUP;
-  m_valid_events[8] = CV_EVENT_MBUTTONDBLCLK;
-  m_valid_events[9] = CV_EVENT_MOUSEMOVE;
+  m_valid_events[0] = cv::EVENT_LBUTTONDOWN;
+  m_valid_events[1] = cv::EVENT_LBUTTONUP;
+  m_valid_events[2] = cv::EVENT_LBUTTONDBLCLK;
+  m_valid_events[3] = cv::EVENT_RBUTTONDOWN;
+  m_valid_events[4] = cv::EVENT_RBUTTONUP;
+  m_valid_events[5] = cv::EVENT_RBUTTONDBLCLK;
+  m_valid_events[6] = cv::EVENT_MBUTTONDOWN;
+  m_valid_events[7] = cv::EVENT_MBUTTONUP;
+  m_valid_events[8] = cv::EVENT_MBUTTONDBLCLK;
+  m_valid_events[9] = cv::EVENT_MOUSEMOVE;
   
   std::sort(m_valid_events.begin(), m_valid_events.end());
 }
