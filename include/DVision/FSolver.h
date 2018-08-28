@@ -11,7 +11,7 @@
 #ifndef __D_F_SOLVER__
 #define __D_F_SOLVER__
 
-#include <opencv2/core.hpp>
+#include <opencv2/core/core.hpp>
 #include <vector>
 
 namespace DVision {

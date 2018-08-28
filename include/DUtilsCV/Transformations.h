@@ -11,7 +11,7 @@
 #ifndef __TRANSFORMATIONS__
 #define __TRANSFORMATIONS__
 
-#include <opencv2/core.hpp>
+#include <opencv2/core/core.hpp>
 
 namespace DUtilsCV {
 

@@ -11,7 +11,7 @@
 #ifndef __D_CV_TYPES__
 #define __D_CV_TYPES__
 
-#include <opencv2/core.hpp>
+#include <opencv2/core/core.hpp>
 #include <string>
 
 namespace DUtilsCV

@@ -11,8 +11,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include "Matches.h"
 
 #include "DUtilsCV.h" // defines macros CVXX

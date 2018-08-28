@@ -11,7 +11,9 @@
 #ifndef __D_IMAGE_FUNCTIONS__
 #define __D_IMAGE_FUNCTIONS__
 
-#include <opencv2/core.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/features2d/features2d.hpp>
 
 namespace DVision {
 

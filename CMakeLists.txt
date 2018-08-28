@@ -66,6 +66,7 @@ if(BUILD_DVision)
 
   find_package(Boost QUIET)  # For dynamic_bitset
   if (Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIR})
     set(HDRS include/DVision/BRIEF.h ${HDRS})
     set(SRCS src/DVision/BRIEF.cpp ${SRCS})
   endif(Boost_FOUND)
