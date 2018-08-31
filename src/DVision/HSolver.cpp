@@ -141,7 +141,7 @@ cv::Mat HSolver::findHomography(const cv::Mat &P1, const cv::Mat &P2,
       cv::multiply(ab, ab, sq_ab);
       
       cv::Mat error;
-      cv::reduce(sq_ab, error, 0, CV_REDUCE_SUM); // 0 = single row
+      cv::reduce(sq_ab, error, 0, cv::REDUCE_SUM); // 0 = single row
       // squared error is positive
     
       // get inliers
