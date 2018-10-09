@@ -398,8 +398,8 @@ void Drawing::Plot::setAxes(double minx, double maxx, double miny, double maxy,
   double xdif = maxx - minx;
   double ydif = maxy - miny;
   
-  m_uppx = xdif / double(m_canvas.cols - m_margin*2); // units per pixel
-  m_uppy = ydif / double(m_canvas.rows - m_margin*2);
+  m_uppx = xdif / double(m_canvas.cols - margin*2); // units per pixel
+  m_uppy = ydif / double(m_canvas.rows - margin*2);
   
   // axis equal
   if(m_uppx > m_uppy)
