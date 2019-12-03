@@ -43,8 +43,8 @@ if(BUILD_DUtilsCV)
     include/DUtilsCV/DUtilsCV.h        include/DUtilsCV/GUI.h             include/DUtilsCV/IO.h              include/DUtilsCV/Transformations.h
     ${HRDS})
   set(SRCS 
-    src/DUtilsCV/Drawing.cpp         src/DUtilsCV/Geometry.cpp        src/DUtilsCV/Mat.cpp             src/DUtilsCV/Types.cpp
-    src/DUtilsCV/GUI.cpp             src/DUtilsCV/IO.cpp              src/DUtilsCV/Transformations.cpp
+    src/DUtilsCV/Geometry.cpp        src/DUtilsCV/Mat.cpp             src/DUtilsCV/Types.cpp
+    src/DUtilsCV/IO.cpp              src/DUtilsCV/Transformations.cpp
     ${SRCS})
 endif(BUILD_DUtilsCV)
 
