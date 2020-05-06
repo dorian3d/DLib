@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0)
 project(DLib)
 
 option(BUILD_DUtils   "Build DUtils (basic c++ functions)." ON)
@@ -80,9 +80,9 @@ if(WIN32)
   set(LIB_SHARED "STATIC")
 endif(WIN32)
 
-include_directories(include/DUtils include/DUtilsCV include/DVision ${OpenCV_INCLUDE_DIRS})
 add_library(${PROJECT_NAME} ${LIB_SHARED} ${SRCS})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+target_include_directories(${PROJECT_NAME} PUBLIC include/DUtils include/DUtilsCV include/DVision ${OpenCV_INCLUDE_DIRS})
 
 configure_file(src/DLib.cmake.in
   "${PROJECT_BINARY_DIR}/DLibConfig.cmake" @ONLY)
