@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0)
 project(DLib)
 
 option(BUILD_DUtils   "Build DUtils (basic c++ functions)." ON)
@@ -12,13 +12,9 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 if(MSVC)
-  if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
-    string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
-  endif()
-elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic")
+  add_compile_options(/W4)
+else()
+  add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 if(BUILD_DUtils)
@@ -80,9 +76,10 @@ if(WIN32)
   set(LIB_SHARED "STATIC")
 endif(WIN32)
 
-include_directories(include/DUtils include/DUtilsCV include/DVision ${OpenCV_INCLUDE_DIRS})
 add_library(${PROJECT_NAME} ${LIB_SHARED} ${SRCS})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+target_include_directories(${PROJECT_NAME} PUBLIC include/DUtils include/DUtilsCV include/DVision ${OpenCV_INCLUDE_DIRS})
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 11)
 
 configure_file(src/DLib.cmake.in
   "${PROJECT_BINARY_DIR}/DLibConfig.cmake" @ONLY)

@@ -342,7 +342,7 @@ void STL::indexSort(RandomIt first, RandomIt last,
 // ---------------------------------------------------------------------------
 
 template<class RandomIt>
-void STL::arrange(RandomIt first, RandomIt last,
+void STL::arrange(RandomIt first, RandomIt,
   const std::vector<unsigned int> &indices)
 {
   for(size_t i = 0; i < indices.size(); ++i)
