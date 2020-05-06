@@ -83,6 +83,7 @@ endif(WIN32)
 add_library(${PROJECT_NAME} ${LIB_SHARED} ${SRCS})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 target_include_directories(${PROJECT_NAME} PUBLIC include/DUtils include/DUtilsCV include/DVision ${OpenCV_INCLUDE_DIRS})
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 11)
 
 configure_file(src/DLib.cmake.in
   "${PROJECT_BINARY_DIR}/DLibConfig.cmake" @ONLY)
